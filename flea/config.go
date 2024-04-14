@@ -18,6 +18,7 @@ var mainEnvs = []string{
 
 type FleaConfig struct {
 	Env                       string `mapstructure:"ENV"`
+	FleaKubeconfigVault       bool   `mapstructure:"FLEA_KUBECONFIG_VAULT"`
 	FleaKubeconfigPath        string `mapstructure:"FLEA_KUBECONFIG_PATH"`
 	FleaK8sUserTokenNamespace string `mapstructure:"FLEA_K8S_USER_TOKEN_NAMESPACE"`
 	FleaK8sUserTokenName      string `mapstructure:"FLEA_K8S_USER_TOKEN_NAME"`
@@ -43,6 +44,7 @@ func LoadConfig(config *FleaConfig) {
 	}
 
 	viper.AutomaticEnv()
+	viper.SetDefault("FLEA_KUBECONFIG_VAULT", true)
 	viper.SetDefault("FLEA_K8S_USER_TOKEN_NAMESPACE", "default")
 	viper.SetDefault("FLEA_K8S_USER_TOKEN_NAME", "developer-token")
 	viper.SetDefault("FLEA_K8S_CA_NAMESPACE", "kube-system")
@@ -52,6 +54,7 @@ func LoadConfig(config *FleaConfig) {
 	viper.SetDefault("VAULT_ADDR", "https://vault.offline.shelopes.com")
 
 	viper.BindEnv("ENV")
+	viper.BindEnv("FLEA_KUBECONFIG_VAULT")
 	viper.BindEnv("FLEA_KUBECONFIG_PATH")
 	viper.BindEnv("FLEA_K8S_USER_TOKEN_NAMESPACE")
 	viper.BindEnv("FLEA_K8S_USER_TOKEN_NAME")
@@ -80,8 +83,9 @@ func isEnvExist(envs []string) error {
 }
 
 func SetKubeconfigPath(config *FleaConfig) string {
-	if config.FleaKubeconfigPath != "" {
-		return config.FleaKubeconfigPath
+	if config.FleaKubeconfigVault {
+		return "./kubeconfig"
 	}
-	return "./vault/" + config.Env + "/.kube/config"
+
+	return config.FleaKubeconfigPath
 }

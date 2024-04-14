@@ -41,3 +41,12 @@ func PutToVault(ctx context.Context, fleaconfig *flea.FleaConfig, kubeconfig str
 	log.Info(configIdentity, " config was written to the Vault successfully.")
 	return nil
 }
+
+func GetFromVault(ctx context.Context, KVPath string, key string, client *vault.Client) (string, error) {
+	d, err := client.Secrets.KvV2Read(ctx, KVPath, vault.WithMountPath("kv"))
+	if err != nil {
+		return "", err
+	}
+
+	return d.Data.Data[key].(string), nil
+}

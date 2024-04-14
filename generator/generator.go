@@ -40,6 +40,11 @@ type fleaKubeconfigTemplateParams struct {
 func GenerateKubeconfig(kubeconfigTemplate string, fleaconfig *flea.FleaConfig, client kubernetes.Interface) (string, error) {
 	buf := new(bytes.Buffer)
 
+	// tokenName, err := k8s.GetUserTokenName(fleaconfig, client)
+	// if err != nil {
+	// 	return "", err
+	// }
+
 	userTokenData, err := k8s.GetUserTokenData(fleaconfig, fleaconfig.FleaK8sUserTokenName, client)
 	if err != nil {
 		return "", err
