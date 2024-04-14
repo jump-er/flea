@@ -33,7 +33,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		err = os.WriteFile("./kubeconfig", []byte(d), 0777)
+		err = os.WriteFile("./kubeconfig", []byte(d), 0600)
 		if err != nil {
 			log.Fatal(err)
 		}
